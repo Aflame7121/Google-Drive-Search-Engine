@@ -72,20 +72,23 @@ def test_app_py_importable():
     Verify that the main application can be imported with some tolerance for missing optional dependencies.
     """
     try:
-        # Temporarily mock textract if it's not installed
-        if 'textract' not in sys.modules:
-            sys.modules['textract'] = mock_missing_module('textract')
+        # Mock optional dependencies
+        optional_modules = ['textract', 'apiclient']
+        for module_name in optional_modules:
+            if module_name not in sys.modules:
+                sys.modules[module_name] = mock_missing_module(module_name)
         
-        # Suppress warnings about textract or other optional dependencies
+        # Suppress warnings about optional dependencies
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", ImportWarning)
             module = importlib.import_module('app')
     except ImportError as e:
         pytest.fail(f"Failed to import main application: {e}")
     finally:
-        # Remove the mock module
-        if 'textract' in sys.modules and isinstance(sys.modules['textract'], type(mock_missing_module('textract'))):
-            del sys.modules['textract']
+        # Remove mock modules
+        for module_name in optional_modules:
+            if module_name in sys.modules and isinstance(sys.modules[module_name], type(mock_missing_module(module_name))):
+                del sys.modules[module_name]
 
 def test_critical_project_files_exist():
     """
