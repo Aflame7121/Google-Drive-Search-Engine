@@ -1,0 +1,31 @@
+[tool.pytest.ini_options]
+# Test discovery settings
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+
+# Coverage configuration
+addopts = [
+    "--cov=.",
+    "--cov-report=term-missing",
+    "--cov-fail-under=80",
+    "-v"
+]
+
+# Ignore certain paths from coverage
+[tool.coverage.run]
+omit = [
+    ".venv/*",
+    "**/__pycache__/*",
+    "tests/*"
+]
+
+# Specific coverage requirements per module
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:"
+]
