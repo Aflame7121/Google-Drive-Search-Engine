@@ -1,6 +1,7 @@
-# Existing requirements with explicit google library
+# Explicit dependencies for app imports
 google-api-python-client==1.8.2
 googleapiclient==1.0.4
+httplib2==0.17.3
 
 # Testing Dependencies
 pytest==8.3.5
@@ -8,4 +9,9 @@ pytest-cov==4.1.0
 pytest-mock==3.14.0
 coverage==7.5.1
 
-# Rest of existing requirements remain the same
+# Existing requirements (rest unchanged)
+argcomplete==1.10.0
+astroid==2.4.0
+beautifulsoup4==4.8.0
+cachetools==4.1.0
+# ... other existing requirements remain the same
