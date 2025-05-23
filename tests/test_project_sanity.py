@@ -3,9 +3,18 @@ import sys
 import importlib
 import pytest
 import warnings
+import importlib.util
 
 # Add the project root directory to the Python path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+def mock_missing_module(module_name):
+    """
+    Create a mock module to replace missing optional dependencies.
+    """
+    spec = importlib.util.spec_from_loader(module_name, loader=None)
+    module = importlib.util.module_from_spec(spec)
+    return module
 
 def test_worker_threads_importable():
     """
@@ -63,12 +72,20 @@ def test_app_py_importable():
     Verify that the main application can be imported with some tolerance for missing optional dependencies.
     """
     try:
+        # Temporarily mock textract if it's not installed
+        if 'textract' not in sys.modules:
+            sys.modules['textract'] = mock_missing_module('textract')
+        
         # Suppress warnings about textract or other optional dependencies
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", ImportWarning)
             module = importlib.import_module('app')
     except ImportError as e:
         pytest.fail(f"Failed to import main application: {e}")
+    finally:
+        # Remove the mock module
+        if 'textract' in sys.modules and isinstance(sys.modules['textract'], type(mock_missing_module('textract'))):
+            del sys.modules['textract']
 
 def test_critical_project_files_exist():
     """
