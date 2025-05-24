@@ -27,7 +27,8 @@ class MockAuthManager:
         """
         try:
             with open(self.client_id_path, 'r') as f:
-                return json.load(f)
+                data = json.load(f)
+                return data.get('web', {})
         except FileNotFoundError:
             return None
         except json.JSONDecodeError:
